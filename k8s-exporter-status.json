@@ -1,57 +1,41 @@
 {
   "datasource": {
-    "type": "datasource",
-    "uid": "-- Mixed --"
+    "type": "prometheus",
+    "uid": "grafanacloud-prom"
   },
-  "description": "Red = Missing, Amber = Duplicate, Green = OK",
   "fieldConfig": {
     "defaults": {
-      "mappings": [
-        {
-          "options": {
-            "0": {
-              "color": "dark-red",
-              "index": 1
-            },
-            "1": {
-              "color": "green",
-              "index": 0
-            }
-          },
-          "type": "value"
-        }
-      ],
+      "mappings": [],
       "thresholds": {
-        "mode": "absolute",
+        "mode": "percentage",
         "steps": [
           {
             "color": "dark-green",
             "value": null
           },
           {
-            "color": "#EAB839",
-            "value": 1
+            "color": "dark-red",
+            "value": 25
           }
         ]
       },
-      "unit": "short"
+      "color": {
+        "mode": "thresholds"
+      },
+      "decimals": 0,
+      "max": 10,
+      "unit": "decbytes"
     },
     "overrides": []
   },
   "gridPos": {
-    "h": 4,
-    "w": 24,
-    "x": 0,
-    "y": 1
+    "h": 7,
+    "w": 12,
+    "x": 12,
+    "y": 2
   },
-  "id": 25,
-  "links": [
-    {
-      "targetBlank": true,
-      "title": "Kubernetes Integration Docs",
-      "url": "https://grafana.com/docs/grafana-cloud/kubernetes/integration-kubernetes/"
-    }
-  ],
+  "id": 11,
+  "links": [],
   "options": {
     "reduceOptions": {
       "values": false,
@@ -61,65 +45,30 @@
       "fields": ""
     },
     "orientation": "auto",
-    "textMode": "name",
-    "colorMode": "background",
-    "graphMode": "none",
-    "justifyMode": "auto",
+    "displayMode": "lcd",
+    "valueMode": "color",
+    "showUnfilled": true,
+    "minVizWidth": 0,
+    "minVizHeight": 10,
     "text": {
-      "valueSize": 20
+      "titleSize": 1
     }
   },
   "pluginVersion": "10.2.0-59981",
   "targets": [
     {
       "datasource": {
-        "uid": "${datasource}"
+        "type": "prometheus",
+        "uid": "grafanacloud-prom"
       },
       "editorMode": "code",
-      "exemplar": false,
-      "expr": "max by (cluster) (\n    count by (cluster, node) (kubelet_node_name{cluster=\"$cluster\"}) > 1 OR \n    topk(1, kubelet_node_name{cluster=\"$cluster\"}) OR\n    1-absent(kubelet_node_name{cluster=\"$cluster\"}) \n)\n",
-      "instant": true,
-      "interval": "",
-      "legendFormat": "Kubelet",
+      "expr": "container_memory_swap{pod=~\"$pod_name\"}",
+      "instant": false,
+      "legendFormat": "__auto",
+      "range": true,
       "refId": "A"
-    },
-    {
-      "datasource": {
-        "uid": "${datasource}"
-      },
-      "exemplar": false,
-      "expr": "max by (cluster) (\n    count by (cluster, node) (kube_node_info{cluster=\"$cluster\"}) > 1 OR\n    topk(1, kube_node_info{cluster=\"$cluster\"}) OR\n    1-absent(kube_node_info{cluster=\"$cluster\"})\n)",
-      "hide": false,
-      "instant": true,
-      "interval": "",
-      "legendFormat": "Kube State Metrics",
-      "refId": "B"
-    },
-    {
-      "datasource": {
-        "uid": "${datasource}"
-      },
-      "exemplar": false,
-      "expr": "max by (cluster) (\n    count by (cluster, instance) (machine_memory_bytes{cluster=\"$cluster\"} /\n        machine_memory_bytes{cluster=\"$cluster\"}) > 1 OR\n    topk(1, machine_memory_bytes{cluster=\"$cluster\"} /\n        machine_memory_bytes{cluster=\"$cluster\"}) OR\n    1-absent(machine_memory_bytes{cluster=\"$cluster\"})\n)",
-      "hide": false,
-      "instant": true,
-      "interval": "",
-      "legendFormat": "cAdvisor",
-      "refId": "C"
-    },
-    {
-      "datasource": {
-        "uid": "${datasource}"
-      },
-      "exemplar": false,
-      "expr": "max by (cluster) (\n    count by (cluster, instance) (node_cpu_seconds_total{cpu=\"0\", mode=\"idle\", cluster=\"$cluster\"} /\n        node_cpu_seconds_total{cpu=\"0\", mode=\"idle\", cluster=\"$cluster\"}) > 1 OR\n    topk(1, node_cpu_seconds_total{cpu=\"0\", mode=\"idle\", cluster=\"$cluster\"} /\n        node_cpu_seconds_total{cpu=\"0\", mode=\"idle\", cluster=\"$cluster\"}) OR\n    1-absent(node_cpu_seconds_total{cpu=\"0\", mode=\"idle\", cluster=\"$cluster\"})\n)",
-      "hide": false,
-      "instant": true,
-      "interval": "",
-      "legendFormat": "Node Exporter",
-      "refId": "D"
     }
   ],
-  "title": "Configuration status",
-  "type": "stat"
+  "title": "Swap Space Used(per pod)",
+  "type": "bargauge"
 }
