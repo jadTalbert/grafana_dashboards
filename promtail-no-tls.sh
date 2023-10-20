@@ -275,7 +275,7 @@ spec:
     spec:
       containers:
       - args:
-        - -client.url=http://<instanceId>:<apiKey>@<instanceUrl>/prometheus
+        - -client.url=http://<instanceId>:<apiKey>@<instanceUrl>
         - -config.file=/etc/promtail/promtail.yml
         env:
         - name: HOSTNAME
